@@ -3,6 +3,7 @@
 use Mojolicious::Lite;
 use YAML qw/LoadFile/;
 use JavaScript::Minifier qw/minify/;
+use JSON;
 
 my $projects_dir = "./projects";
 
@@ -31,7 +32,10 @@ helper get_all_code => sub{
    my @projs = $self->get_dependency_list($proj);
    app->log->debug(@projs);
 
-   my $code;
+   my $code = $self->get_code_from_file("./js/ObjectLifeCicleManager.js");
+   my $json_conf = JSON::encode_json($self->get_all_conf($proj));
+   $code .= "$/$/\$IOC = new  ObjectLifeCicleManager($json_conf);$/$/";
+
    for my $dproj($self->get_dependency_list($proj)) {
       for my $pfile ($self->get_project_files($dproj)) {
          $code .= $self->get_code($dproj, $pfile);
@@ -43,17 +47,47 @@ helper get_all_code => sub{
    $code;
 };
 
+helper get_all_conf => sub {
+   my $self    = shift;
+   my $project = shift;
+
+   my $conf;
+   for my $dproj($self->get_dependency_list($project)) {
+      my $tmp_conf = $self->get_all_conf($dproj);
+      for my $key(keys %$tmp_conf) {
+         $conf->{$key} = $tmp_conf->{$key};
+      }
+   }
+   my $tmp_conf = $self->get_project_conf($project);
+   for my $key(keys %$tmp_conf) {
+      $conf->{$key} = $tmp_conf->{$key};
+   }
+   $conf
+};
+
+helper get_project_conf => sub {
+   my $self    = shift;
+   my $project = shift;
+
+   return unless exists $self->get_project_details($project)->{asking};
+   $self->get_project_details($project)->{asking};
+};
+
 helper get_code => sub{
    my $self    = shift;
    my $project = shift;
    my $file    = shift;
 
-   app->log->debug("getting code from: proj: $project; file: $file");
-
    my $pdir = $self->get_project_dir($project);
-   app->log->debug("debug: $pdir");
-   open(my $fh, "<", "$pdir/$file") || die "File '$pdir/$file' not found.";
-   minify(input => $fh, copyright => "${project}::$file")
+   $self->get_code_from_file("$pdir/$file");
+};
+
+helper get_code_from_file => sub{
+   my $self    = shift;
+   my $file    = shift;
+
+   open(my $fh, "<", "$file") || die "File '$file' not found.";
+   minify(input => $fh, copyright => "$file")
 };
 
 helper get_dependency_list => sub{

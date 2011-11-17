@@ -1,5 +1,5 @@
 function Greetings() {
-   this.who = new Every();
+   this.who = $IOC.get_obj("who should listen");
 }
 
 Greetings.prototype = {

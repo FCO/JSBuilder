@@ -4,10 +4,12 @@ depends:
 files:
   - js/main.js
 asking:
-  Class01:
-    singleton: Test01
-  Class02:
-    new: Test02
-  Class03:
-    instance_by_arg: Test03
+  what 2 say:
+    singleton: Greetings
+  who should listen:
+    new: Every
+  #Class03:
+  #  instance_by_arg: Test03
+  who:
+    string: "World"
   

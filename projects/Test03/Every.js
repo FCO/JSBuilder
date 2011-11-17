@@ -2,6 +2,6 @@ function Every() { }
 
 Every.prototype = {
    toString: function() {
-      return "World";
+      return $IOC.get_obj("who");
    }
 };
