@@ -1,0 +1,5 @@
+---
+depends:
+  - "Test03"
+files:
+  - lalala.js

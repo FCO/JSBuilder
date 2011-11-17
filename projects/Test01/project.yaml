@@ -1,0 +1,5 @@
+---
+depends:
+  - "Test02"
+files:
+  - js/main.js
