@@ -1,0 +1,5 @@
+function ObjectLifeCicleManager() {
+}
+
+ObjectLifeCicleManager.prototype = {
+};

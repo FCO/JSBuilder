@@ -1,5 +1,0 @@
-function LifeCicleManager() {
-}
-
-LifeCicleManager.prototype = {
-};
