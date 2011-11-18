@@ -6,7 +6,7 @@ function ObjectLifeCicleManager(conf) {
 ObjectLifeCicleManager.prototype = {
    get_instance: function(name, prop) {
       if(this.singleton_instances[name] == null)
-         this.singleton_instances[name] = this.instanciate(name);
+         this.singleton_instances[name] = this.instanciate(name, prop);
       return this.singleton_instances[name]
    },
    instanciate: function(class_name, prop) {

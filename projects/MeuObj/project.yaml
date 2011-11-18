@@ -1,0 +1,11 @@
+---
+depends:
+files:
+  - js/MeuObj.js
+asking:
+  false:
+    bool: false
+  test:
+    singleton: MeuObj
+    constructor:
+      - string: "Hello World"
