@@ -5,7 +5,7 @@ files:
   - test.js
 asking:
   olaMundo:
-    string: '{["Hello", "World"].join(" ")}'
+    string: "Hello World"
   olaTerra:
     string: '{["Hello", "Earth"].join(" ")}'
   test:
