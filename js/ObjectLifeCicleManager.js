@@ -12,7 +12,9 @@ ObjectLifeCicleManager.prototype = {
    instanciate: function(class_name, prop) {
       var pars = [];
       if(prop != null && prop.constructor != null){
-         if(prop.constructor.length == null) {
+         if(typeof(prop.constructor) == "string") {
+               pars.push(JSON.stringify(this.treat_eval(this.construct_obj(prop.constructor))));
+         } else if(prop.constructor.length == null) {
                pars.push(JSON.stringify(this.treat_eval(this.construct_obj(prop.constructor))));
          } else {
             for(var i = 0; i < prop.constructor.length; i++) {

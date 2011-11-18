@@ -4,7 +4,10 @@ depends:
 files:
   - test.js
 asking:
+  olaMundo:
+    string: '{["Hello", "World"].join(" ")}'
   test:
     singleton: MeuObj
-    constructor:
-      - string: "Hello World"
+    #constructor:
+    #  string: "Ola Mundo"
+    constructor: olaMundo
