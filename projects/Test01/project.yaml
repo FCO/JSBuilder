@@ -8,8 +8,11 @@ asking:
     singleton: Greetings
   who should listen:
     new: Every
-  #Class03:
-  #  instance_by_arg: Test03
+    constructor:
+      - string: "log"
+    setter:
+      do_log:
+        bool: false
   who:
     string: "World"
   
