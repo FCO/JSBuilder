@@ -6,8 +6,17 @@ files:
 asking:
   olaMundo:
     string: '{["Hello", "World"].join(" ")}'
+  olaTerra:
+    string: '{["Hello", "Earth"].join(" ")}'
   test:
     singleton: MeuObj
     #constructor:
     #  string: "Ola Mundo"
     constructor: olaMundo
+    setter:
+      - str: olaTerra
+      - separator:
+          string: ", "
+    setter_function:
+      - set_pontuation:
+          string: "!!!"

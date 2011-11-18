@@ -31,12 +31,35 @@ ObjectLifeCicleManager.prototype = {
       else
          new_obj = eval("new " + class_name + "(" + pars.join(", ") + ")");
 
+      if(prop != null && prop.setter_function != null){
+         var setters;
+         if(typeof(prop.setter_function) == "string" || prop.setter_function.length == null)
+	    setters = [prop.setter_function];
+	 else
+	    setters = prop.setter_function;
+
+         for(var i = 0; i < setters.length; i++){
+            for(var attr in setters[i]) {
+	      if(new_obj[attr] == null){
+	        throw "'" + attr + "' is not a function, please review your IOC configuration";
+	      }
+	      eval("new_obj." + attr + "("+ JSON.stringify(this.treat_eval(this.construct_obj(setters[i][attr]))) + ")");
+	    }
+	 }
+      }
       if(prop != null && prop.setter != null){
-         for(var attr in prop.setter) {
-	   if(new_obj[attr] == null){
-	     throw "'" + attr + "' is not a function, please review your IOC configuration";
-	   }
-	   eval("new_obj." + attr + "("+ JSON.stringify(this.treat_eval(this.construct_obj(prop.setter[attr]))) + ")");
+         var setters;
+         if(typeof(prop.setter) == "string" || prop.setter.length == null)
+	    setters = [prop.setter];
+	 else
+	    setters = prop.setter;
+
+         for(var i = 0; i < setters.length; i++){
+            for(var attr in setters[i]) {
+	      if(new_obj[attr] == null){
+	      }
+	      eval("new_obj." + attr + " = "+ JSON.stringify(this.treat_eval(this.construct_obj(setters[i][attr]))));
+	    }
 	 }
       }
       return new_obj;
