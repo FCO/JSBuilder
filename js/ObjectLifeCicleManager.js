@@ -13,22 +13,28 @@ ObjectLifeCicleManager.prototype = {
       var pars = [];
       if(prop != null && prop.constructor != null){
          if(prop.constructor.length == null) {
-               pars.push(JSON.stringify(this.construct_obj(prop.constructor)));
+               pars.push(JSON.stringify(this.treat_eval(this.construct_obj(prop.constructor))));
          } else {
             for(var i = 0; i < prop.constructor.length; i++) {
-               pars.push(JSON.stringify(this.construct_obj(prop.constructor[i])));
+               pars.push(JSON.stringify(this.treat_eval(this.construct_obj(prop.constructor[i]))));
             }
          }
       }
 
-      var new_obj = eval("new " + class_name + "(" + pars.join(", ") + ")");
+      var after_treat = this.treat_eval(class_name);
+
+      var new_obj;
+      if(class_name == after_treat)
+         new_obj = eval("new " + class_name + "(" + pars.join(", ") + ")");
+      else
+         new_obj = eval("new " + class_name + "(" + pars.join(", ") + ")");
 
       if(prop != null && prop.setter != null){
          for(var attr in prop.setter) {
 	   if(new_obj[attr] == null){
 	     throw "'" + attr + "' is not a function, please review your IOC configuration";
 	   }
-	   eval("new_obj." + attr + "("+ JSON.stringify(this.construct_obj(prop.setter[attr])) + ")");
+	   eval("new_obj." + attr + "("+ JSON.stringify(this.treat_eval(this.construct_obj(prop.setter[attr]))) + ")");
 	 }
       }
       return new_obj;
@@ -48,10 +54,16 @@ ObjectLifeCicleManager.prototype = {
          } else if(key == "new") {
             return this.instanciate(hash["new"], hash);
          } else if(key == "string") {
-            return hash["string"];
+            return this.treat_eval(hash["string"]);
          } else if(key == "bool") {
-            return hash["bool"] == "true";
+            return this.treat_eval(hash["bool"]) == "true";
          }
       }
+   },
+   treat_eval: function(str){
+     if(typeof(str) == "string" && str.match(/^\s*\{.*\}\s*$/)) {
+        return eval(str);
+     }
+     return str;
    },
 };

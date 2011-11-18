@@ -15,5 +15,5 @@ asking:
     setter:
       do_log: false
   who:
-    string: "World"
+    string: '{"W" + "o" + ["r","l","d"].join("")}'
   
