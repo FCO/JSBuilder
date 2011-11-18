@@ -4,6 +4,8 @@ depends:
 files:
   - js/main.js
 asking:
+  false:
+    bool: false
   what 2 say:
     singleton: Greetings
   who should listen:
@@ -11,8 +13,7 @@ asking:
     constructor:
       - string: "log"
     setter:
-      do_log:
-        bool: false
+      do_log: false
   who:
     string: "World"
   

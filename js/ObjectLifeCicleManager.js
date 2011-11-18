@@ -39,6 +39,9 @@ ObjectLifeCicleManager.prototype = {
       return this.construct_obj(hash);
    },
    construct_obj: function(hash) {
+      if(typeof(hash) == "string"){
+         return this.get_obj(hash);
+      }
       for(var key in hash) {
          if(key == "singleton") {
             return this.get_instance(hash["singleton"], hash);
