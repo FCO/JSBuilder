@@ -7,11 +7,11 @@ use JSON;
 
 my $projects_dir = "./projects";
 
-get "/get_code_from/:proj_name" => sub {
-   my $self = shift;
-   my $proj = $self->param("proj_name");
-   app->log->debug("Param: $proj");
-   $self->render(text => $self->get_all_code($proj));
+any "/get_code_from/:proj_name" => sub {
+   my $self      = shift;
+   my $proj      = $self->param("proj_name");
+   my $init_conf = eval q/JSON::decode_json($self->param("asking"))/;
+   $self->render(text => $self->get_all_code($proj, $init_conf));
 };
 
 helper get_project_code => sub {
@@ -26,14 +26,15 @@ helper get_project_code => sub {
 };
 
 helper get_all_code => sub{
-   my $self = shift;
-   my $proj = shift;
+   my $self      = shift;
+   my $proj      = shift;
+   my $init_conf = shift;
 
    my @projs = $self->get_dependency_list($proj);
    app->log->debug(@projs);
 
    my $code = $self->get_code_from_file("./js/ObjectLifeCicleManager.js");
-   my $json_conf = JSON::encode_json($self->get_all_conf($proj));
+   my $json_conf = JSON::encode_json($self->get_all_conf($proj, $init_conf));
    $code .= "$/$/\$IOC = new  ObjectLifeCicleManager($json_conf);$/$/";
 
    for my $dproj($self->get_dependency_list($proj)) {
@@ -48,8 +49,9 @@ helper get_all_code => sub{
 };
 
 helper get_all_conf => sub {
-   my $self    = shift;
-   my $project = shift;
+   my $self      = shift;
+   my $project   = shift;
+   my $init_conf = shift;
 
    my $conf;
    for my $dproj($self->get_dependency_list($project)) {
@@ -61,6 +63,11 @@ helper get_all_conf => sub {
    my $tmp_conf = $self->get_project_conf($project);
    for my $key(keys %$tmp_conf) {
       $conf->{$key} = $tmp_conf->{$key};
+   }
+   if(defined $init_conf and ref $init_conf eq "HASH") {
+      for my $key(keys %$init_conf) {
+         $conf->{$key} = $init_conf->{$key};
+      }
    }
    $conf
 };
