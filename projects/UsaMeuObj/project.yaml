@@ -3,6 +3,8 @@ depends:
   - MeuObj
 files:
   - test.js
+do not export:
+  - test.js
 asking:
   olaMundo:
     string: "Hello World"

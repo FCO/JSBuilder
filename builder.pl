@@ -11,6 +11,7 @@ any "/get_code_from/:proj_name" => sub {
    my $self      = shift;
    my $proj      = $self->param("proj_name");
    my $init_conf = eval q/JSON::decode_json($self->param("asking"))/;
+   $self->stash->{atual_project} = $proj;
    $self->render(text => $self->get_all_code($proj, $init_conf));
 };
 
@@ -80,11 +81,26 @@ helper get_project_conf => sub {
    $self->get_project_details($project)->{asking};
 };
 
+helper should_be_showed => sub {
+   my $self    = shift;
+   my $project = shift;
+   my $file    = shift;
+
+   my $donot = $self->get_project_details($project)->{"do not export"};
+   for my $test(ref $donot eq "ARRAY" ? @$donot : $donot) {
+      return 1 if $file eq $test;
+   }
+   return 0;
+};
+
 helper get_code => sub{
    my $self    = shift;
    my $project = shift;
    my $file    = shift;
 
+   if($project ne $self->stash->{atual_project}) {
+      return if $self->should_be_showed($project, $file);
+   }
    my $pdir = $self->get_project_dir($project);
    $self->get_code_from_file("$pdir/$file");
 };
