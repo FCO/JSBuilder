@@ -1,0 +1,9 @@
+---
+depends:
+  - ClassIWant2Test
+files:
+  - Mock.js
+asking:
+  UsingAnotherThing:
+    new: Mock
+

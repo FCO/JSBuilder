@@ -1,0 +1,14 @@
+---
+depends:
+  - UsingAnotherThing
+files:
+  - ClassIWant2Test.js
+  - usingClassIWant2Test.js
+asking:
+  UsingAnotherThing:
+    new: UsingAnotherThing
+  ClassIWant2Test:
+    singleton: ClassIWant2Test
+    setter:
+      usinganotherthing: UsingAnotherThing
+
