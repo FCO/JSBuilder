@@ -8,6 +8,13 @@ use App::gh::Git;
 use JSON;
 
 my $projects_dir = "./projects";
+my $cache_dir    = "./cache";
+
+unless(-d $cache_dir) {
+   mkdir($cache_dir);
+}
+
+app->static->root($cache_dir);
 
 any "/create_new_project/:proj_name" => sub {
    my $self = shift;
@@ -26,7 +33,13 @@ any "/get_code_from/:proj_name" => sub {
    my $proj      = $self->param("proj_name");
    my $init_conf = eval q/JSON::decode_json($self->param("asking"))/;
    $self->stash->{atual_project} = $proj;
-   $self->render(text => $self->get_all_code($proj, $init_conf));
+   my $code = $self->get_all_code($proj, $init_conf);
+   unless(-d "$cache_dir/get_code_from") {
+      mkdir("$cache_dir/get_code_from");
+   }
+   open my $cache, ">", "$cache_dir/get_code_from/$proj";
+   print { $cache } $code;
+   $self->render(text => $code);
 };
 
 helper get_project_code => sub {
