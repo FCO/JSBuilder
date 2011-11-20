@@ -165,7 +165,12 @@ helper get_project_details => sub{
    my $self = shift;
    my $name = shift;
 
-   LoadFile("$projects_dir/$name/project.yaml");
+   if(-f "$projects_dir/$name/project.yaml") {
+      return LoadFile("$projects_dir/$name/project.yaml");
+   } elsif(-f "$projects_dir/$name/project.json") {
+      open my $json, "<", "$projects_dir/$name/project.json";
+      return JSON::decode_json join "", <$json>;
+   }
 };
 
 app->start("daemon");
