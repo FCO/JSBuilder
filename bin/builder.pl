@@ -6,15 +6,22 @@ use JavaScript::Minifier qw/minify/;
 use App::gh::Git;
 use Mojo::JSON;
 use FindBin qw/$Bin/;
+use File::Copy::Recursive qw/dircopy/;
 
-my $projects_dir = "./projects";
-my $cache_dir    = "./cache";
+my $projects_dir  = "./projects";
+my $cache_dir     = "./cache";
+my $project_skell = "./pskell";
+
+my $repo_dir = $projects_dir;
 
 chdir "$Bin/../";
 my $json = Mojo::JSON->new;
 
 unless(-d $projects_dir) {
    mkdir($projects_dir);
+}
+unless(-d $project_skell) {
+   mkdir($project_skell);
 }
 unless(-d $cache_dir) {
    mkdir($cache_dir);
@@ -26,12 +33,9 @@ any "/create_new_project/:proj_name" => sub {
    my $self = shift;
    my $proj = $self->param("proj_name");
 
-   chdir($projects_dir);
-   return $self->render(code => 300) if -d $proj;
-   mkdir($proj);
-   chdir($proj);
-   Git::command_noisy("init");
-   return $self->render(text => "$projects_dir/$proj");
+   return $self->render(code => 300) if not $self->create_new_project_dir($proj);
+   my $server = $self->tx->local_address . ":" . $self->tx->local_port;
+   return $self->render(text => "http://$server/$repo_dir/$proj");
 } => undef;
 
 any "/get_code_from/:proj_name" => sub {
@@ -46,6 +50,20 @@ any "/get_code_from/:proj_name" => sub {
    open my $cache, ">", "$cache_dir/get_code_from/$proj";
    print { $cache } $code;
    $self->render(text => $code);
+};
+
+helper create_new_project_dir => sub {
+   my $self = shift;
+   my $proj = shift;
+
+   return 0 if -d "$projects_dir/$proj";
+
+   if(dircopy($project_skell, "$projects_dir/$proj")) {
+      chdir "$projects_dir/$proj";
+      Git::command_noisy("init");
+      return 1;
+   }
+   return 0;
 };
 
 helper get_project_code => sub {
