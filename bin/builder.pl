@@ -1,6 +1,5 @@
 #!/usr/bin/perl
 
-#BEGIN{eval "use Mojolicious::Lite"}
 use Mojolicious::Lite;
 use YAML qw/LoadFile/;
 use JavaScript::Minifier qw/minify/;
@@ -13,6 +12,9 @@ my $cache_dir    = "./cache";
 
 chdir "$Bin/../";
 
+unless(-d $projects_dir) {
+   mkdir($projects_dir);
+}
 unless(-d $cache_dir) {
    mkdir($cache_dir);
 }
