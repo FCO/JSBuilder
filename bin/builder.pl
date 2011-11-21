@@ -187,8 +187,10 @@ helper get_project_details => sub{
    if(-f "$projects_dir/$name/project.yaml") {
       return LoadFile("$projects_dir/$name/project.yaml");
    } elsif(-f "$projects_dir/$name/project.json") {
-      open my $json, "<", "$projects_dir/$name/project.json";
-      return $json->decode(join "", <$json>);
+      open my $filejson, "<", "$projects_dir/$name/project.json";
+      return $json->decode(join "", <$filejson>);
+   } else {
+      return { files => [ map {s{^$projects_dir/$name/}{}; $_} <$projects_dir/$name/*.js> ] }
    }
 };
 
