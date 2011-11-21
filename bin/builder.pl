@@ -3,7 +3,7 @@
 use Mojolicious::Lite;
 use YAML qw/LoadFile/;
 use JavaScript::Minifier qw/minify/;
-use App::gh::Git;
+#use App::gh::Git;
 use Mojo::JSON;
 use FindBin qw/$Bin/;
 use File::Copy::Recursive qw/dircopy/;
@@ -60,7 +60,13 @@ helper create_new_project_dir => sub {
 
    if(dircopy($project_skell, "$projects_dir/$proj")) {
       chdir "$projects_dir/$proj";
-      Git::command_noisy("init");
+      #Git::command_noisy("init");
+      #my $repo = Git->repository (Directory => '.');
+      #$repo->command("add", ".");
+      #$repo->command("commit", "-a -m 'Initial Commit (JSBuilder)'");
+      qx{git init};
+      qx{git add .};
+      qx{git commit -a -m "Initial Commit (JSBuilder)"};
       return 1;
    }
    return 0;
