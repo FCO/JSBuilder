@@ -6,6 +6,7 @@ use YAML qw/LoadFile/;
 use JavaScript::Minifier qw/minify/;
 use App::gh::Git;
 use JSON;
+use FindBin qw/$Bin/;
 
 my $projects_dir = "./projects";
 my $cache_dir    = "./cache";
