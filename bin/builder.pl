@@ -4,13 +4,14 @@ use Mojolicious::Lite;
 use YAML qw/LoadFile/;
 use JavaScript::Minifier qw/minify/;
 use App::gh::Git;
-use JSON;
+use Mojo::JSON;
 use FindBin qw/$Bin/;
 
 my $projects_dir = "./projects";
 my $cache_dir    = "./cache";
 
 chdir "$Bin/../";
+my $json = Mojo::JSON->new;
 
 unless(-d $projects_dir) {
    mkdir($projects_dir);
@@ -36,7 +37,7 @@ any "/create_new_project/:proj_name" => sub {
 any "/get_code_from/:proj_name" => sub {
    my $self      = shift;
    my $proj      = $self->param("proj_name");
-   my $init_conf = eval q/JSON::decode_json($self->param("asking"))/;
+   my $init_conf = eval q/$json->decode($self->param("asking"))/;
    $self->stash->{atual_project} = $proj;
    my $code = $self->get_all_code($proj, $init_conf);
    unless(-d "$cache_dir/get_code_from") {
@@ -67,7 +68,7 @@ helper get_all_code => sub{
    app->log->debug(@projs);
 
    my $code = $self->get_code_from_file("./js/ObjectLifeCicleManager.js");
-   my $json_conf = JSON::encode_json($self->get_all_conf($proj, $init_conf));
+   my $json_conf = $json->encode($self->get_all_conf($proj, $init_conf));
    $code .= "$/$/\$IOC = new  ObjectLifeCicleManager($json_conf);$/$/";
 
    for my $dproj($self->get_dependency_list($proj)) {
@@ -187,7 +188,7 @@ helper get_project_details => sub{
       return LoadFile("$projects_dir/$name/project.yaml");
    } elsif(-f "$projects_dir/$name/project.json") {
       open my $json, "<", "$projects_dir/$name/project.json";
-      return JSON::decode_json join "", <$json>;
+      return $json->decode(join "", <$json>);
    }
 };
 
