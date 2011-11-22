@@ -1,4 +1,4 @@
 function Mock() {
    console.log("Instanciating 'UsingAnotherThing'");
-   this.iam = "Just a Mock";
+   this.iam = function(){return "Just a Mock"};
 }

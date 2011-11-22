@@ -13,12 +13,12 @@ ObjectLifeCicleManager.prototype = {
       var pars = [];
       if(prop != null && prop.constructor != null){
          if(typeof(prop.constructor) == "string") {
-               pars.push(JSON.stringify(this.treat_eval(this.construct_obj(prop.constructor))));
+               pars.push(this.treat_eval(this.construct_obj(prop.constructor)));
          } else if(prop.constructor.length == null) {
-               pars.push(JSON.stringify(this.treat_eval(this.construct_obj(prop.constructor))));
+               pars.push(this.treat_eval(this.construct_obj(prop.constructor)));
          } else {
             for(var i = 0; i < prop.constructor.length; i++) {
-               pars.push(JSON.stringify(this.treat_eval(this.construct_obj(prop.constructor[i]))));
+               pars.push(this.treat_eval(this.construct_obj(prop.constructor[i])));
             }
          }
       }
@@ -27,9 +27,9 @@ ObjectLifeCicleManager.prototype = {
 
       var new_obj;
       if(class_name == after_treat)
-         new_obj = eval("new " + class_name + "(" + pars.join(", ") + ")");
+         new_obj = eval("new " + class_name + "(pars)");
       else
-         new_obj = eval("new " + class_name + "(" + pars.join(", ") + ")");
+         new_obj = eval("new " + class_name + "(pars)");
 
       if(prop != null && prop.setter_function != null){
          var setters;
@@ -58,7 +58,8 @@ ObjectLifeCicleManager.prototype = {
             for(var attr in setters[i]) {
 	      if(new_obj[attr] == null){
 	      }
-	      eval("new_obj." + attr + " = "+ JSON.stringify(this.treat_eval(this.construct_obj(setters[i][attr]))));
+	      var tmpobj = this.treat_eval(this.construct_obj(setters[i][attr]));
+	      eval("new_obj." + attr + " = tmpobj");
 	    }
 	 }
       }
@@ -88,7 +89,7 @@ ObjectLifeCicleManager.prototype = {
    treat_eval: function(str){
      if(typeof(str) == "string" && str.match(/^\s*\{.*\}\s*$/)) {
         return eval(str);
-     }
-     return str;
+     } else
+        return str;
    },
 };

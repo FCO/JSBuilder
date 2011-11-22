@@ -1,7 +1,7 @@
 function UsingAnotherThing() {
    console.log("Instanciating 'UsingAnotherThing'");
-   //this.iam = function(){alert("lalala")};
-   this.iam = "UsingAnotherThing";
+   this.iam = function(){return "UsingAnotherThing"};
+   //this.iam = "UsingAnotherThing";
 }
 
 UsingAnotherThing.prototype = {
